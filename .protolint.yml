@@ -25,8 +25,3 @@ lint:
       # etc
       - REPEATED_FIELD_NAMES_PLURALIZED
 
-  rules_option:
-    message_names_exclude_prepositions:
-      excludes:
-        - SignUp
-        - SignIn

@@ -4,10 +4,10 @@ package henkenclub.account;
 
 service Auth {
   // SignUp
-  rpc SignUp(SignUpRequest) returns (SignUpRequest);
+  rpc SignUp(SignupRequest) returns (SignupResponse);
   // SignIn
-  rpc EmailSignIn(EmailSignInRequest) returns (SignInResponse);
-  rpc AliasSignIn(AliasSignInRequest) returns (SignInResponse);
+  rpc SigninWithEmail(EmailSigninRequest) returns (SigninResponse);
+  rpc SigninWithAlias(AliasSigninRequest) returns (SigninResponse);
   // RefreshToken
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
   // Validate
@@ -15,27 +15,27 @@ service Auth {
 }
 
 // SignUp
-message SignUpRequest {
+message SignupRequest {
   string password = 1;
   string email = 2;
   string alias = 3;
   optional string display_name = 4;
 }
-message SignUpResponse {
+message SignupResponse {
   string access_token = 1;
   string refresh_token = 2;
 }
 
 // SignIn
-message EmailSignInRequest {
+message EmailSigninRequest {
   string email = 1;
   string password = 2;
 }
-message AliasSignInRequest {
+message AliasSigninRequest {
   string email = 1;
   string password = 2;
 }
-message SignInResponse {
+message SigninResponse {
   string access_token = 1;
   string refresh_token = 2;
 }
@@ -73,4 +73,5 @@ message GetUserResponse {
   string id = 1;
   string alias = 2;
   string display_name = 3;
+  string picture = 4;
 }
