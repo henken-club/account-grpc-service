@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "EditorConfig.EditorConfig",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "christian-kohler.path-intellisense",
+    "ms-azuretools.vscode-docker",
+    "prisma.prisma",
+    "streetsidesoftware.code-spell-checker",
+    "zxh404.vscode-proto3",
+    "plex.vscode-protolint"
+  ]
+}

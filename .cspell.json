@@ -1,0 +1,12 @@
+{
+  "version": "0.1",
+  "language": "en",
+  "words": ["proto"],
+  "ignoreWords": ["henken", "henkenclub", "protolint", "plexsystems"],
+  "ignorePaths": [
+    ".vscode/extensions.json",
+    "dist/**",
+    "node_modules/**",
+    ".cspell.json"
+  ]
+}
