@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package henkenclub.account;
 
-service Auth {
+service AuthService {
   // SignUp
   rpc SignUp(SignUpRequest) returns (SignUpRequest);
   // SignIn
@@ -15,38 +15,32 @@ service Auth {
 }
 
 // SignUp
-
 message SignUpRequest {
   string password = 1;
   string email = 2;
   string alias = 3;
   optional string display_name = 4;
 }
-
 message SignUpResponse {
   string access_token = 1;
   string refresh_token = 2;
 }
 
 // SignIn
-
 message EmailSignInRequest {
   string email = 1;
   string password = 2;
 }
-
 message AliasSignInRequest {
   string email = 1;
   string password = 2;
 }
-
 message SignInResponse {
   string access_token = 1;
   string refresh_token = 2;
 }
 
 // RefreshToken
-
 message RefreshTokenRequest {
   string refresh_token = 1;
 }
@@ -55,7 +49,6 @@ message RefreshTokenResponse {
 }
 
 // VerifyToken
-
 message VerifyTokenRequest {
   string access_token = 1;
 }
@@ -63,22 +56,19 @@ message VerifyTokenResponse {
   string user_id = 1;
 }
 
-service Manager {
+service ManagerService {
   // GetUser
   rpc GetUserFromID(IDUserRequest) returns (GetUserResponse);
   rpc GetUserFromAlias(AliasUserRequest) returns (GetUserResponse);
 }
 
 // GetUser
-
 message IDUserRequest {
   string id = 1;
 }
-
 message AliasUserRequest {
   string alias = 1;
 }
-
 message GetUserResponse {
   string id = 1;
   string alias = 2;

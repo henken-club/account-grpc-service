@@ -1,0 +1,36 @@
+lint:
+  rules:
+    no_default: true
+    add:
+      - INDENT
+      - ORDER
+      - MAX_LINE_LENGTH
+      - IMPORTS_SORTED
+      - SYNTAX_CONSISTENT
+      # case
+      - FILE_NAMES_LOWER_SNAKE_CASE
+      - PACKAGE_NAME_LOWER_CASE
+      - SERVICE_NAMES_UPPER_CAMEL_CASE
+      - SERVICE_NAMES_END_WITH
+      - RPC_NAMES_UPPER_CAMEL_CASE
+      - MESSAGE_NAMES_UPPER_CAMEL_CASE
+      - FIELD_NAMES_LOWER_SNAKE_CASE
+      - ENUM_NAMES_UPPER_CAMEL_CASE
+      - ENUM_FIELD_NAMES_UPPER_SNAKE_CASE
+      # prepositions
+      - MESSAGE_NAMES_EXCLUDE_PREPOSITIONS
+      - FIELD_NAMES_EXCLUDE_PREPOSITIONS
+      # proto3
+      - PROTO3_FIELDS_AVOID_REQUIRED
+      - PROTO3_GROUPS_AVOID
+      # etc
+      - REPEATED_FIELD_NAMES_PLURALIZED
+
+  rules_option:
+    service_names_end_with:
+      text: Service
+
+    message_names_exclude_prepositions:
+      excludes:
+        - SignUp
+        - SignIn
