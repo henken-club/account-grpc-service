@@ -20,12 +20,12 @@ message SignUpRequest {
   string password = 1;
   string email = 2;
   string alias = 3;
-  optional string displayName = 4;
+  optional string display_name = 4;
 }
 
 message SignUpResponse {
-  string accessToken = 1;
-  string refreshToken = 2;
+  string access_token = 1;
+  string refresh_token = 2;
 }
 
 // SignIn
@@ -41,19 +41,27 @@ message AliasSignInRequest {
 }
 
 message SignInResponse {
-  string accessToken = 1;
-  string refreshToken = 2;
+  string access_token = 1;
+  string refresh_token = 2;
 }
 
 // RefreshToken
 
-message RefreshTokenRequest { string refreshToken = 1; }
-message RefreshTokenResponse { string accessToken = 1; }
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+message RefreshTokenResponse {
+  string access_token = 1;
+}
 
 // VerifyToken
 
-message VerifyTokenRequest { string accessToken = 1; }
-message VerifyTokenResponse { string userId = 1; }
+message VerifyTokenRequest {
+  string access_token = 1;
+}
+message VerifyTokenResponse {
+  string user_id = 1;
+}
 
 service Manager {
   // GetUser
@@ -63,12 +71,16 @@ service Manager {
 
 // GetUser
 
-message IDUserRequest { string id = 1; }
+message IDUserRequest {
+  string id = 1;
+}
 
-message AliasUserRequest { string alias = 1; }
+message AliasUserRequest {
+  string alias = 1;
+}
 
 message GetUserResponse {
   string id = 1;
   string alias = 2;
-  string displayName = 3;
+  string display_name = 3;
 }
