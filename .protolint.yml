@@ -11,7 +11,6 @@ lint:
       - FILE_NAMES_LOWER_SNAKE_CASE
       - PACKAGE_NAME_LOWER_CASE
       - SERVICE_NAMES_UPPER_CAMEL_CASE
-      - SERVICE_NAMES_END_WITH
       - RPC_NAMES_UPPER_CAMEL_CASE
       - MESSAGE_NAMES_UPPER_CAMEL_CASE
       - FIELD_NAMES_LOWER_SNAKE_CASE
@@ -27,9 +26,6 @@ lint:
       - REPEATED_FIELD_NAMES_PLURALIZED
 
   rules_option:
-    service_names_end_with:
-      text: Service
-
     message_names_exclude_prepositions:
       excludes:
         - SignUp
