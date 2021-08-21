@@ -1,0 +1,11 @@
+# dependencies
+package-lock.json
+
+# output
+dist/
+
+# protogen
+src/protogen
+
+# test
+coverage/

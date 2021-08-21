@@ -2,7 +2,14 @@
   "version": "0.1",
   "language": "en",
   "words": ["proto"],
-  "ignoreWords": ["henken", "henkenclub", "protolint", "plexsystems"],
+  "ignoreWords": [
+    "henken",
+    "henkenclub",
+    "protolint",
+    "plexsystems",
+    "bcrpyt",
+    "protobuf"
+  ],
   "ignorePaths": [
     ".vscode/extensions.json",
     "dist/**",
