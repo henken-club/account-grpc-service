@@ -24,4 +24,3 @@ lint:
       - PROTO3_GROUPS_AVOID
       # etc
       - REPEATED_FIELD_NAMES_PLURALIZED
-

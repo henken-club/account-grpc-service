@@ -13,3 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: plexsystems/protolint-action@v0.2.0
+
+  cspell:
+    name: cspell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: streetsidesoftware/cspell-action@v1.0.1
