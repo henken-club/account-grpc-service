@@ -4,7 +4,7 @@ package henkenclub.account;
 
 service Auth {
   // SignUp
-  rpc SignUp(SignupRequest) returns (SignupResponse);
+  rpc Signup(SignupRequest) returns (SignupResponse);
   // SignIn
   rpc SigninWithEmail(EmailSigninRequest) returns (SigninResponse);
   rpc SigninWithAlias(AliasSigninRequest) returns (SigninResponse);
@@ -56,7 +56,7 @@ message VerifyTokenResponse {
   string user_id = 1;
 }
 
-service Manager {
+service Account {
   // GetUser
   rpc GetUserFromID(IDUserRequest) returns (GetUserResponse);
   rpc GetUserFromAlias(AliasUserRequest) returns (GetUserResponse);
@@ -72,6 +72,5 @@ message AliasUserRequest {
 message GetUserResponse {
   string id = 1;
   string alias = 2;
-  string display_name = 3;
-  string picture = 4;
+  optional string display_name = 3;
 }
