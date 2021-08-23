@@ -1,7 +1,14 @@
 {
   "version": "0.1",
   "language": "en",
-  "words": ["proto", "signin", "signup"],
+  "words": [
+    "proto",
+    "signin",
+    "signup",
+    "protogen",
+    "microservice",
+    "microservices"
+  ],
   "ignoreWords": [
     "henken",
     "henkenclub",
@@ -9,7 +16,9 @@
     "plexsystems",
     "bcrpyt",
     "protobuf",
-    "streetsidesoftware"
+    "streetsidesoftware",
+    "nestjs",
+    "grpc"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
