@@ -8,7 +8,10 @@
     "protogen",
     "microservice",
     "microservices",
-    "typecheck"
+    "typecheck",
+    "datamodel",
+    "datasource",
+    "healthcheck"
   ],
   "ignoreWords": [
     "henken",
@@ -23,12 +26,17 @@
     "hadolint",
     "scripty",
     "arkweid",
-    "lefthook"
+    "lefthook",
+    "dmmf",
+    "protoc",
+    "mkdir",
+    "mysqladmin"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
     "dist/**",
     "node_modules/**",
+    "scripts/**",
     "src/protogen/**",
     ".cspell.json",
     "package-lock.json"
