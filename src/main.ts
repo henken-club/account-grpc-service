@@ -15,7 +15,7 @@ async function bootstrap() {
         // eslint-disable-next-line no-process-env
         url: process.env.CONNECTION_URL,
         package: [protobufPackage],
-        protoPath: [path.join(__dirname, 'proto/account.proto')],
+        protoPath: [path.join(process.cwd(), 'proto/account.proto')],
       },
     },
   );

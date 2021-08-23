@@ -1,6 +1,6 @@
 import {Module} from '@nestjs/common';
 import {JwtModule} from '@nestjs/jwt';
-import {ConfigModule, ConfigType} from '@nestjs/config';
+import {ConfigModule} from '@nestjs/config';
 
 import {AuthController} from './auth.controller';
 import {AuthConfig} from './auth.config';
@@ -10,12 +10,9 @@ import {PrismaModule} from '~/prisma/prisma.module';
 
 @Module({
   imports: [
-    JwtModule.registerAsync({
-      imports: [ConfigModule.forFeature(AuthConfig)],
-      inject: [AuthConfig.KEY],
-      useFactory: async (config: ConfigType<typeof AuthConfig>) => ({}),
-    }),
+    JwtModule.register({}),
     PrismaModule,
+    ConfigModule.forFeature(AuthConfig),
   ],
   controllers: [AuthController],
   providers: [AuthController, AuthService],
