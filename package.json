@@ -8,6 +8,7 @@
     "protogen": "scripty",
     "test:unit": "scripty",
     "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
     "lint": "run-s -cn lint:*",
     "lint:eslint": "scripty",
     "lint:prettier": "scripty",

@@ -7,7 +7,8 @@
     "signup",
     "protogen",
     "microservice",
-    "microservices"
+    "microservices",
+    "typecheck"
   ],
   "ignoreWords": [
     "henken",
@@ -18,12 +19,17 @@
     "protobuf",
     "streetsidesoftware",
     "nestjs",
-    "grpc"
+    "grpc",
+    "hadolint",
+    "scripty",
+    "arkweid",
+    "lefthook"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
     "dist/**",
     "node_modules/**",
-    ".cspell.json"
+    ".cspell.json",
+    "package-lock.json"
   ]
 }
