@@ -7,11 +7,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model TemporaryUser {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  alias       String
+  displayName String
+  password    String
+  updatedAt   DateTime @updatedAt
+}
+
 model User {
-  id          String  @id @default(uuid())
-  email       String  @unique
-  alias       String  @unique
-  displayName String?
+  id          String @id
+  email       String @unique
+  alias       String @unique
+  displayName String
   password    String
 
   setting Setting?

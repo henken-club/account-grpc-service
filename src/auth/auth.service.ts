@@ -9,6 +9,7 @@ import {PrismaService} from '~/prisma/prisma.service';
 
 export type AccessTokenPayload = {uid: string};
 export type RefreshTokenPayload = {uid: string};
+export type RegisterTokenPayload = {uid: string};
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,8 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly prisma: PrismaService,
   ) {}
+
+  // Password
 
   /**
    * 平文のパスワードを暗号化する．
@@ -47,25 +50,144 @@ export class AuthService {
       .catch(() => false);
   }
 
+  // Sign up
+
+  /**
+   * メールアドレスが既に登録されているユーザと重複しているかを検証する．
+   *
+   * @param email メールアドレス
+   * @returns メールアドレスが重複しているか
+   */
+  async isEmailDuplicated(email: string): Promise<boolean> {
+    return this.prisma.user
+      .findUnique({where: {email}, select: {id: true}})
+      .then((result) => Boolean(result));
+  }
+
+  /**
+   * エイリアスが既に登録されているユーザと重複しているかを検証する．
+   *
+   * @param alias エイリアス
+   * @returns エイリアスが重複しているか
+   */
+  async isAliasDuplicated(alias: string): Promise<boolean> {
+    return this.prisma.user
+      .findUnique({where: {alias}, select: {id: true}})
+      .then((result) => Boolean(result));
+  }
+
+  /**
+   * 仮ユーザーを生成または更新する
+   *
+   * @param payload
+   * @returns 仮生成されたユーザーの情報
+   */
+  async upsertTemporaryUser({
+    encryptedPassword: password,
+    email,
+    alias,
+    displayName,
+  }: {
+    encryptedPassword: string;
+    email: string;
+    alias: string;
+    displayName: string;
+  }): Promise<{userId: string}> {
+    return this.prisma.temporaryUser
+      .upsert({
+        where: {email},
+        create: {email, alias, password, displayName},
+        update: {alias, password, displayName},
+        select: {id: true},
+      })
+      .then(({id}) => ({userId: id}));
+  }
+
+  async generateRegisterToken(userId: string): Promise<string> {
+    const payload: AccessTokenPayload = {uid: userId};
+    return this.jwt.signAsync(payload, {
+      secret: this.config.accessJwtSecret,
+      expiresIn: this.config.accessExpiresIn,
+    });
+  }
+
+  /**
+   * Register Tokenをデコードして必要な情報を取得する．
+   *
+   * @param registerToken Register Token
+   * @returns Register Tokenから取得出来る情報
+   */
+  async decodeRegisterToken(registerToken: string): Promise<{userId: string}> {
+    return this.jwt
+      .verifyAsync<RegisterTokenPayload>(registerToken, {
+        secret: this.config.refreshJwtSecret,
+      })
+      .then(({uid}) => ({userId: uid}));
+  }
+
+  async generateRegisterPair(
+    userId: string,
+  ): Promise<{registerId: string; registerToken: string}> {
+    return {registerId: '', registerToken: ''};
+  }
+
+  async updateRegisterPair(
+    userId: string,
+  ): Promise<{registerId: string; registerToken: string}> {
+    return {registerId: '', registerToken: ''};
+  }
+
+  async requestSendEmail(
+    userId: string,
+    payload: {registerId: string},
+  ): Promise<void> {
+    const userInfo = await this.prisma.temporaryUser.findUnique({
+      where: {id: userId},
+      rejectOnNotFound: true,
+      select: {email: true, alias: true, displayName: true},
+    });
+  }
+
+  // User registration
+
+  /**
+   * idとtokenのペアが正しいかどうかを検証する．
+   *
+   * @param payload idとtokenのペア
+   * @returns idとtokenのペアが正しいか
+   */
+  async validateRegisterPayload(payload: {
+    registerId: string;
+    registerToken: string;
+  }): Promise<boolean> {
+    return true;
+  }
+
+  async registerUser(userId: string): Promise<{userId: string}> {
+    return this.prisma.temporaryUser
+      .findUnique({
+        where: {id: userId},
+        select: {
+          id: true,
+          email: true,
+          alias: true,
+          displayName: true,
+          password: true,
+        },
+        rejectOnNotFound: true,
+      })
+      .then((temp) =>
+        this.prisma.user.create({data: {...temp}, select: {id: true}}),
+      )
+      .then(({id}) => ({userId: id}));
+  }
+
+  // Login
+
   async findUser(
     where: {email: string} | {alias: string},
   ): Promise<{id: string} | null> {
     return this.prisma.user.findUnique({where, select: {id: true}});
-  }
-
-  async createUser({
-    encryptedPassword: password,
-    ...profile
-  }: {
-    email: string;
-    alias: string;
-    displayName: string | null;
-    encryptedPassword: string;
-  }): Promise<{id: string}> {
-    return this.prisma.user.create({
-      data: {password, ...profile},
-      select: {id: true},
-    });
   }
 
   /**

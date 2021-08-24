@@ -2,16 +2,17 @@
   "version": "0.1",
   "language": "en",
   "words": [
-    "proto",
-    "signin",
-    "signup",
-    "protogen",
-    "microservice",
-    "microservices",
-    "typecheck",
     "datamodel",
     "datasource",
-    "healthcheck"
+    "healthcheck",
+    "microservice",
+    "microservices",
+    "proto",
+    "protogen",
+    "signin",
+    "signup",
+    "typecheck",
+    "upsert"
   ],
   "ignoreWords": [
     "henken",
