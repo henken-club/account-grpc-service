@@ -1,7 +1,7 @@
 {
   "version": "0.1",
   "language": "en",
-  "words": ["proto", "signin", "signup"],
+  "words": ["proto", "signin", "signup", "oneof"],
   "ignoreWords": [
     "henken",
     "henkenclub",
