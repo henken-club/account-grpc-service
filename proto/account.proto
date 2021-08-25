@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package henkenclub.account;
 
+import "google/protobuf/timestamp.proto";
+
 /* common */
 
 // Basic User Info
@@ -46,6 +48,12 @@ service Signup {
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
 }
 
+message Registration {
+  string verification_code = 1;
+  string register_token = 2;
+  google.protobuf.Timestamp expired_at = 3;
+}
+
 /* Create Temporary User */
 
 message CreateTemporaryUserRequest {
@@ -56,10 +64,6 @@ message CreateTemporaryUserRequest {
 }
 
 message CreateTemporaryUserResponse {
-  message RegisterPair {
-    string verify_code = 1;
-    string register_token = 2;
-  }
 
   message Error {
     enum Detail {
@@ -71,7 +75,7 @@ message CreateTemporaryUserResponse {
   }
 
   oneof result {
-    RegisterPair pair = 1;
+    Registration registration = 1;
     Error error = 2;
   }
 }
@@ -83,7 +87,7 @@ message ResendVerificationEmailRequest {
 }
 
 message ResendVerificationEmailResponse {
-  string verify_code = 1;
+  Registration registration = 1;
 }
 
 /* Register User */
