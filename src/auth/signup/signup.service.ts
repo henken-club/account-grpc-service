@@ -1,12 +1,13 @@
 import {randomUUID} from 'crypto';
 
 import {Inject, Injectable} from '@nestjs/common';
-import {JwtService} from '@nestjs/jwt';
 import {ConfigType} from '@nestjs/config';
+import ms from 'ms';
 
 import {AuthConfig} from '../auth.config';
 
 import {PrismaService} from '~/prisma/prisma.service';
+import {Timestamp} from '~/protogen/google/protobuf/timestamp';
 
 export type RegisterTokenPayload = {uid: string};
 
@@ -15,9 +16,15 @@ export class SignupService {
   constructor(
     @Inject(AuthConfig.KEY)
     private readonly config: ConfigType<typeof AuthConfig>,
-    private readonly jwt: JwtService,
     private readonly prisma: PrismaService,
   ) {}
+
+  formatTimestamp(date: Date): Timestamp {
+    return {
+      seconds: date.valueOf() / 1000,
+      nanos: (date.valueOf() % 1000) * 1e6,
+    };
+  }
 
   /**
    * メールアドレスが既に登録されているユーザと重複しているかを検証する．
@@ -68,52 +75,47 @@ export class SignupService {
     });
   }
 
-  async generateVerifyCode(): Promise<string> {
+  async generateVerificationCode(): Promise<string> {
     return randomUUID();
   }
 
-  async generateRegisterToken(userId: string): Promise<string> {
-    const payload: RegisterTokenPayload = {uid: userId};
-    return this.jwt.signAsync(payload, {
-      secret: this.config.accessJwtSecret,
-      expiresIn: this.config.accessExpiresIn,
+  async generateRegisterToken(): Promise<string> {
+    return randomUUID();
+  }
+
+  async calculateExpiredAt(): Promise<Date> {
+    return new Date(Date.now() + ms(this.config.registrationExpiresIn));
+  }
+
+  async createRegisterPair(userId: string): Promise<{
+    code: string;
+    token: string;
+    expiredAt: Date;
+  }> {
+    const code = await this.generateVerificationCode();
+    const token = await this.generateRegisterToken();
+    const expiredAt = await this.calculateExpiredAt();
+    return this.prisma.registration.create({
+      data: {
+        code,
+        token,
+        expiredAt,
+        user: {connect: {id: userId}},
+      },
+      select: {token: true, code: true, expiredAt: true},
     });
   }
 
-  /**
-   * Register Tokenをデコードして必要な情報を取得する．
-   *
-   * @param registerToken Register Token
-   * @returns Register Tokenから取得出来る情報
-   */
-  async decodeRegisterToken(registerToken: string): Promise<{userId: string}> {
-    return this.jwt
-      .verifyAsync<RegisterTokenPayload>(registerToken, {
-        secret: this.config.refreshJwtSecret,
-      })
-      .then(({uid}) => ({userId: uid}));
-  }
-
-  async generateRegisterPair(
-    userId: string,
-  ): Promise<{verifyCode: string; registerToken: string}> {
-    return {verifyCode: '', registerToken: ''};
-  }
-
-  async updateRegisterPair(
-    userId: string,
-  ): Promise<{verifyCode: string; registerToken: string}> {
-    return {verifyCode: '', registerToken: ''};
-  }
-
-  async requestSendEmail(
-    tempUserId: string,
-    payload: {verifyCode: string},
-  ): Promise<void> {
-    const userInfo = await this.prisma.temporaryUser.findUnique({
-      where: {id: tempUserId},
-      rejectOnNotFound: true,
-      select: {email: true, alias: true, displayName: true},
+  async updateRegisterPair(token: string): Promise<{
+    code: string;
+    token: string;
+    expiredAt: Date;
+  }> {
+    const newCode = await this.generateVerificationCode();
+    return this.prisma.registration.update({
+      where: {token},
+      data: {code: newCode},
+      select: {token: true, code: true, expiredAt: true},
     });
   }
 
@@ -121,35 +123,53 @@ export class SignupService {
   /**
    * idとtokenのペアが正しいかどうかを検証する．
    *
-   * @param payload idとtokenのペア
+   * @param code
+   * @param token
    * @returns idとtokenのペアが正しいか
    */
-  async validateRegisterPayload(payload: {
-    verifyCode: string;
-    registerToken: string;
-  }): Promise<boolean> {
-    const {verifyCode, registerToken} = payload;
-    return this.prisma.register
-      .findUnique({where: {verifyCode}, select: {token: true}})
-      .then((result) => result?.token === registerToken);
+  async verifyRegisterPair(token: string, code: string): Promise<boolean> {
+    return this.prisma.registration
+      .findUnique({
+        where: {token},
+        select: {code: true, expiredAt: true},
+      })
+      .then((result) => result?.code === code);
   }
 
-  async registerUser(userId: string): Promise<{userId: string}> {
-    return this.prisma.temporaryUser
+  async getUserFromRegisterToken(registerToken: string): Promise<{id: string}> {
+    return this.prisma.registration.findUnique({
+      where: {token: registerToken},
+      rejectOnNotFound: true,
+      select: {id: true},
+    });
+  }
+
+  async registerUser(registerToken: string): Promise<{id: string}> {
+    return this.prisma.registration
       .findUnique({
-        where: {id: userId},
-        select: {
-          id: true,
-          email: true,
-          alias: true,
-          displayName: true,
-          password: true,
-        },
+        where: {token: registerToken},
+        select: {user: true},
         rejectOnNotFound: true,
       })
-      .then((temp) =>
-        this.prisma.user.create({data: {...temp}, select: {id: true}}),
-      )
-      .then(({id}) => ({userId: id}));
+      .then(({user: {id, email, alias, password, displayName}}) =>
+        this.prisma.user.upsert({
+          where: {id},
+          create: {id, email, alias, password, displayName},
+          update: {},
+          select: {id: true},
+        }),
+      );
+  }
+
+  async requestSendEmail(token: string): Promise<void> {
+    const {code, user} = await this.prisma.registration.findUnique({
+      where: {token},
+      select: {
+        code: true,
+        expiredAt: true,
+        user: {select: {email: true, alias: true, displayName: true}},
+      },
+      rejectOnNotFound: true,
+    });
   }
 }

@@ -28,6 +28,7 @@
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "ms": "^2.1.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.3.0"
   },
@@ -40,6 +41,7 @@
     "@shopify/prettier-config": "^1.1.2",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.1",
+    "@types/ms": "^0.7.31",
     "@types/node": "^16.7.1",
     "eslint": "^7.32.0",
     "eslint-plugin-unused-imports": "^1.1.4",

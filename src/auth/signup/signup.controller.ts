@@ -61,45 +61,52 @@ export class SignupController implements ISignupController {
       displayName: request.displayName || request.alias,
     });
 
-    const {verifyCode, registerToken} = await this.signup.generateRegisterPair(
-      tempUser.id,
-    );
+    const {
+      code: verifyCode,
+      token: registerToken,
+      expiredAt,
+    } = await this.signup.createRegisterPair(tempUser.id);
 
-    await this.signup.requestSendEmail(tempUser.id, {verifyCode});
+    await this.signup.requestSendEmail(registerToken);
 
     return {
-      result: {$case: 'pair', pair: {verifyCode, registerToken}},
+      result: {
+        $case: 'registration',
+        registration: {
+          verificationCode: verifyCode,
+          registerToken,
+          expiredAt: this.signup.formatTimestamp(expiredAt),
+        },
+      },
     };
   }
 
-  async resendVerificationEmail({
-    registerToken,
-  }: ResendVerificationEmailRequest): Promise<ResendVerificationEmailResponse> {
-    const {userId} = await this.signup.decodeRegisterToken(registerToken);
-    const {verifyCode} = await this.signup.updateRegisterPair(userId);
-    await this.signup.requestSendEmail(userId, {verifyCode});
-    return {verifyCode};
+  async resendVerificationEmail(
+    request: ResendVerificationEmailRequest,
+  ): Promise<ResendVerificationEmailResponse> {
+    const {code, expiredAt, token} = await this.signup.updateRegisterPair(
+      request.registerToken,
+    );
+    await this.signup.requestSendEmail(token);
+    return {
+      registration: {
+        verificationCode: code,
+        registerToken: token,
+        expiredAt: this.signup.formatTimestamp(expiredAt),
+      },
+    };
   }
 
-  async registerUser({
-    verifyCode: registerId,
-    registerToken,
-  }: RegisterUserRequest): Promise<RegisterUserResponse> {
-    if (
-      await this.signup.validateRegisterPayload({
-        verifyCode: registerId,
-        registerToken,
-      })
-    )
-      throw new RpcException('Invalid register pair.');
-
-    const {userId: tempUserId} = await this.signup.decodeRegisterToken(
-      registerToken,
+  async registerUser(
+    request: RegisterUserRequest,
+  ): Promise<RegisterUserResponse> {
+    const pairCorrectness = await this.signup.verifyRegisterPair(
+      request.registerToken,
+      request.verifyCode,
     );
+    if (!pairCorrectness) throw new RpcException('Invalid register pair.');
 
-    // 既に登録済みの場合の処理を書く
-
-    const {userId} = await this.signup.registerUser(tempUserId);
+    const {id: userId} = await this.signup.registerUser(request.registerToken);
 
     const accessToken = await this.tokens.generateAccessToken(userId);
     const refreshToken = await this.tokens.generateRefreshToken(userId);

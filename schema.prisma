@@ -15,14 +15,16 @@ model TemporaryUser {
   password    String
   updatedAt   DateTime @updatedAt
 
-  register Register?
+  registration Registration?
 }
 
-model Register {
+model Registration {
   id String @id @default(uuid())
 
-  verifyCode String @unique
-  token      String
+  code  String @unique
+  token String @unique
+
+  expiredAt DateTime
 
   user   TemporaryUser @relation(fields: [userId], references: [id])
   userId String
