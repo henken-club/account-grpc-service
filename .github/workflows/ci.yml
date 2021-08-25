@@ -58,7 +58,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: plexsystems/protolint-action@v0.2.0
+      - uses: plexsystems/protolint-action@v0.4.0
+        with:
+          configDirectory: ./
 
   cspell:
     name: cSpell

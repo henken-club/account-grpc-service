@@ -39,7 +39,8 @@
     "mysqladmin",
     "bcrypt",
     "libssl",
-    "eslintcache"
+    "eslintcache",
+    "streetsidesoftware"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
