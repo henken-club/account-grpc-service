@@ -33,40 +33,29 @@ message GetUserResponse {
   User user = 1;
 }
 
-service Auth {
-  /* User registration */
+service Signup {
+  // create temporary user
+  rpc CreateTemporaryUser(CreateTemporaryUserRequest)
+      returns (CreateTemporaryUserResponse);
 
-  // sign up
-  rpc Signup(SignupRequest) returns (SignupResponse);
+  // resend verify email
+  rpc ResendVerificationEmail(ResendVerificationEmailRequest)
+      returns (ResendVerificationEmailResponse);
 
   // register user
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
-
-  // resend verify email
-  rpc ResendVerifyEmail(ResendVerifyEmailRequest)
-      returns (ResendVerifyEmailResponse);
-
-  /* User auth */
-
-  // sign in
-  rpc Signin(SigninRequest) returns (SigninResponse);
-
-  // refresh access token
-  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
-
-  // verify access token
-  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
 }
 
-// SignUp
-message SignupRequest {
+/* Create Temporary User */
+
+message CreateTemporaryUserRequest {
   string password = 1;
   string email = 2;
   string alias = 3;
   optional string display_name = 4;
 }
 
-message SignupResponse {
+message CreateTemporaryUserResponse {
   message RegisterPair {
     string verify_code = 1;
     string register_token = 2;
@@ -87,16 +76,18 @@ message SignupResponse {
   }
 }
 
-// Register User
-message ResendVerifyEmailRequest {
+/* Resend verification email */
+
+message ResendVerificationEmailRequest {
   string register_token = 1;
 }
 
-message ResendVerifyEmailResponse {
+message ResendVerificationEmailResponse {
   string verify_code = 1;
 }
 
-// Register User
+/* Register User */
+
 message RegisterUserRequest {
   string verify_code = 1;
   string register_token = 2;
@@ -104,6 +95,17 @@ message RegisterUserRequest {
 
 message RegisterUserResponse {
   TokensPair tokens = 1;
+}
+
+service Signin {
+  // sign in
+  rpc Signin(SigninRequest) returns (SigninResponse);
+
+  // refresh access token
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+
+  // verify access token
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
 }
 
 // SignIn
