@@ -46,6 +46,7 @@
     ".vscode/extensions.json",
     "dist/**",
     "node_modules/**",
+    "migration/**",
     "scripts/**",
     "src/protogen/**",
     ".cspell.json",
