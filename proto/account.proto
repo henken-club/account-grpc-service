@@ -2,6 +2,37 @@ syntax = "proto3";
 
 package henkenclub.account;
 
+/* common */
+
+// Basic User Info
+message User {
+  string id = 1;
+  string alias = 2;
+  optional string display_name = 3;
+}
+
+// Auth Tokens pair
+message TokensPair {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+service Account {
+  // GetUser
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+// GetUser
+message GetUserRequest {
+  oneof where {
+    string id = 1;
+    string alias = 2;
+  }
+}
+message GetUserResponse {
+  User user = 1;
+}
+
 service Auth {
   /* User registration */
 
@@ -27,11 +58,6 @@ service Auth {
   rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
 }
 
-message TokensPair {
-  string access_token = 1;
-  string refresh_token = 2;
-}
-
 // SignUp
 message SignupRequest {
   string password = 1;
@@ -42,7 +68,7 @@ message SignupRequest {
 
 message SignupResponse {
   message RegisterPair {
-    string register_id = 1;
+    string verify_code = 1;
     string register_token = 2;
   }
 
@@ -67,12 +93,12 @@ message ResendVerifyEmailRequest {
 }
 
 message ResendVerifyEmailResponse {
-  string register_id = 1;
+  string verify_code = 1;
 }
 
 // Register User
 message RegisterUserRequest {
-  string register_id = 1;
+  string verify_code = 1;
   string register_token = 2;
 }
 
@@ -106,22 +132,4 @@ message VerifyTokenRequest {
 }
 message VerifyTokenResponse {
   string user_id = 1;
-}
-
-service Account {
-  // GetUser
-  rpc GetUser(GetUserRequest) returns (GetUserResponse);
-}
-
-// GetUser
-message GetUserRequest {
-  oneof where {
-    string id = 1;
-    string alias = 2;
-  }
-}
-message GetUserResponse {
-  string id = 1;
-  string alias = 2;
-  optional string display_name = 3;
 }
