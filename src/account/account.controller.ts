@@ -4,11 +4,11 @@ import {RpcException} from '@nestjs/microservices';
 import {AccountService} from './account.service';
 
 import {
-  AliasUserRequest,
-  IDUserRequest,
   AccountController as AccountServiceController,
   AccountControllerMethods,
   HENKENCLUB_ACCOUNT_PACKAGE_NAME,
+  GetUserRequest,
+  GetUserResponse,
 } from '~/protogen/account';
 
 @AccountControllerMethods()
@@ -16,23 +16,22 @@ import {
 export class AccountController implements AccountServiceController {
   constructor(private readonly managerService: AccountService) {}
 
-  async getUserFromID({id}: IDUserRequest) {
-    const result = await this.managerService.getUser({id});
-    if (result === null) throw new RpcException('User not found.');
-    return {
-      id: result.id,
-      alias: result.alias,
-      ...(result.displayName ? {displayName: result.displayName} : {}),
-    };
-  }
+  async getUser(request: GetUserRequest): Promise<GetUserResponse> {
+    if (!request.where) throw new RpcException('Invalid request');
 
-  async getUserFromAlias({alias}: AliasUserRequest) {
-    const result = await this.managerService.getUser({alias});
+    const {
+      where: {$case, ...where},
+    } = request;
+
+    const result = await this.managerService.getUser(where);
     if (result === null) throw new RpcException('User not found.');
+
     return {
-      id: result.id,
-      alias: result.alias,
-      ...(result.displayName ? {displayName: result.displayName} : {}),
+      user: {
+        id: result.id,
+        alias: result.alias,
+        displayName: result.displayName,
+      },
     };
   }
 }
