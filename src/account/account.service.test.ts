@@ -5,7 +5,7 @@ import {AccountService} from './account.service';
 
 import {PrismaModule} from '~/prisma/prisma.module';
 import {PrismaService} from '~/prisma/prisma.service';
-import {cleanPrisma} from '~/prisma/prisma.utils';
+import {cleanPrisma} from '~/test/prisma.utils';
 
 describe('AccountService', () => {
   let app: INestMicroservice;
