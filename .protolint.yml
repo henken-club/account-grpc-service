@@ -24,3 +24,8 @@ lint:
       - PROTO3_GROUPS_AVOID
       # etc
       - REPEATED_FIELD_NAMES_PLURALIZED
+
+  rules_option:
+   field_names_exclude_prepositions:
+      excludes:
+        - expired_at
