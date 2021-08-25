@@ -4,16 +4,20 @@
   "words": [
     "datamodel",
     "datasource",
+    "deps",
     "healthcheck",
+    "logfiles",
     "microservice",
     "microservices",
     "nanos",
+    "oneof",
     "proto",
     "protogen",
     "signin",
     "signup",
     "typecheck",
-    "upsert"
+    "upsert",
+    "workdir"
   ],
   "ignoreWords": [
     "henken",
@@ -32,7 +36,10 @@
     "dmmf",
     "protoc",
     "mkdir",
-    "mysqladmin"
+    "mysqladmin",
+    "bcrypt",
+    "libssl",
+    "eslintcache"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
@@ -42,5 +49,6 @@
     "src/protogen/**",
     ".cspell.json",
     "package-lock.json"
-  ]
+  ],
+  "enableFiletypes": ["dockerfile", "dotenv", "ignore", "proto3"]
 }
