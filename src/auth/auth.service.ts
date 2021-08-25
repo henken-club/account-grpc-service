@@ -1,3 +1,5 @@
+import {randomUUID} from 'crypto';
+
 import {Inject, Injectable} from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
 import {ConfigType} from '@nestjs/config';
@@ -83,24 +85,26 @@ export class AuthService {
    * @returns 仮生成されたユーザーの情報
    */
   async upsertTemporaryUser({
-    encryptedPassword: password,
+    password,
     email,
     alias,
     displayName,
   }: {
-    encryptedPassword: string;
+    password: string;
     email: string;
     alias: string;
     displayName: string;
-  }): Promise<{userId: string}> {
-    return this.prisma.temporaryUser
-      .upsert({
-        where: {email},
-        create: {email, alias, password, displayName},
-        update: {alias, password, displayName},
-        select: {id: true},
-      })
-      .then(({id}) => ({userId: id}));
+  }): Promise<{id: string}> {
+    return this.prisma.temporaryUser.upsert({
+      where: {email},
+      create: {email, alias, password, displayName},
+      update: {alias, password, displayName},
+      select: {id: true},
+    });
+  }
+
+  async generateVerifyCode(): Promise<string> {
+    return randomUUID();
   }
 
   async generateRegisterToken(userId: string): Promise<string> {
@@ -127,22 +131,22 @@ export class AuthService {
 
   async generateRegisterPair(
     userId: string,
-  ): Promise<{registerId: string; registerToken: string}> {
-    return {registerId: '', registerToken: ''};
+  ): Promise<{verifyCode: string; registerToken: string}> {
+    return {verifyCode: '', registerToken: ''};
   }
 
   async updateRegisterPair(
     userId: string,
-  ): Promise<{registerId: string; registerToken: string}> {
-    return {registerId: '', registerToken: ''};
+  ): Promise<{verifyCode: string; registerToken: string}> {
+    return {verifyCode: '', registerToken: ''};
   }
 
   async requestSendEmail(
-    userId: string,
-    payload: {registerId: string},
+    tempUserId: string,
+    payload: {verifyCode: string},
   ): Promise<void> {
     const userInfo = await this.prisma.temporaryUser.findUnique({
-      where: {id: userId},
+      where: {id: tempUserId},
       rejectOnNotFound: true,
       select: {email: true, alias: true, displayName: true},
     });
@@ -157,10 +161,13 @@ export class AuthService {
    * @returns idとtokenのペアが正しいか
    */
   async validateRegisterPayload(payload: {
-    registerId: string;
+    verifyCode: string;
     registerToken: string;
   }): Promise<boolean> {
-    return true;
+    const {verifyCode, registerToken} = payload;
+    return this.prisma.register
+      .findUnique({where: {verifyCode}, select: {token: true}})
+      .then((result) => result?.token === registerToken);
   }
 
   async registerUser(userId: string): Promise<{userId: string}> {

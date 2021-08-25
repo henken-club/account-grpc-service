@@ -49,41 +49,51 @@ export class AuthController implements AccountServiceController {
 
     const encryptedPassword = await this.auth.encryptPassword(request.password);
 
-    const {userId} = await this.auth.upsertTemporaryUser({
+    const tempUser = await this.auth.upsertTemporaryUser({
       email: request.email,
       alias: request.alias,
-      encryptedPassword,
+      password: encryptedPassword,
       displayName: request.displayName || request.alias,
     });
 
-    const {registerId, registerToken} = await this.auth.generateRegisterPair(
-      userId,
+    const {verifyCode, registerToken} = await this.auth.generateRegisterPair(
+      tempUser.id,
     );
 
-    await this.auth.requestSendEmail(userId, {registerId});
+    await this.auth.requestSendEmail(tempUser.id, {verifyCode});
 
-    return {result: {$case: 'pair', pair: {registerId, registerToken}}};
+    return {
+      result: {$case: 'pair', pair: {verifyCode, registerToken}},
+    };
   }
 
   async resendVerifyEmail({
     registerToken,
   }: ResendVerifyEmailRequest): Promise<ResendVerifyEmailResponse> {
     const {userId} = await this.auth.decodeRegisterToken(registerToken);
-    const {registerId} = await this.auth.updateRegisterPair(userId);
-    await this.auth.requestSendEmail(userId, {registerId});
-    return {registerId};
+    const {verifyCode} = await this.auth.updateRegisterPair(userId);
+    await this.auth.requestSendEmail(userId, {verifyCode});
+    return {verifyCode};
   }
 
   async registerUser({
-    registerId,
+    verifyCode: registerId,
     registerToken,
   }: RegisterUserRequest): Promise<RegisterUserResponse> {
-    if (await this.auth.validateRegisterPayload({registerId, registerToken}))
-      throw new RpcException('Invalid pair.');
+    if (
+      await this.auth.validateRegisterPayload({
+        verifyCode: registerId,
+        registerToken,
+      })
+    )
+      throw new RpcException('Invalid register pair.');
 
     const {userId: tempUserId} = await this.auth.decodeRegisterToken(
       registerToken,
     );
+
+    // 既に登録済みの場合の処理を書く
+
     const {userId} = await this.auth.registerUser(tempUserId);
 
     const accessToken = await this.auth.generateAccessToken(userId);
