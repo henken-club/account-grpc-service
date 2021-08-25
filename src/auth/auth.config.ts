@@ -6,8 +6,8 @@ export const AuthConfig = registerAs('auth', () => ({
     : 10,
 
   accessJwtSecret: process.env.JWT_ACCESS_SECRET!,
-  accessExpiresIn: process.env.JWT_ACCESS_EXPIRE_DURATION || '7d',
+  accessExpiresIn: process.env.JWT_ACCESS_EXPIRE_DURATION || '1200s',
 
   refreshJwtSecret: process.env.JWT_REFRESH_SECRET!,
-  refreshExpiresIn: process.env.JWT_REFRESH_EXPIRE_DURATION || '7d',
+  refreshExpiresIn: process.env.JWT_REFRESH_EXPIRE_DURATION || '30d',
 }));

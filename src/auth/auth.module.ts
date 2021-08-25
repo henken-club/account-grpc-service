@@ -2,9 +2,13 @@ import {Module} from '@nestjs/common';
 import {JwtModule} from '@nestjs/jwt';
 import {ConfigModule} from '@nestjs/config';
 
-import {AuthController} from './auth.controller';
+import {SigninController} from './signin/signin.controller';
 import {AuthConfig} from './auth.config';
-import {AuthService} from './auth.service';
+import {SigninService} from './signin/signin.service';
+import {SignupController} from './signup/signup.controller';
+import {TokensService} from './tokens.service';
+import {SignupService} from './signup/signup.service';
+import {PasswordService} from './password.service';
 
 import {PrismaModule} from '~/prisma/prisma.module';
 
@@ -14,7 +18,14 @@ import {PrismaModule} from '~/prisma/prisma.module';
     PrismaModule,
     ConfigModule.forFeature(AuthConfig),
   ],
-  controllers: [AuthController],
-  providers: [AuthController, AuthService],
+  controllers: [SignupController, SigninController],
+  providers: [
+    PasswordService,
+    TokensService,
+    SigninService,
+    SigninController,
+    SignupService,
+    SignupController,
+  ],
 })
 export class AuthModule {}
