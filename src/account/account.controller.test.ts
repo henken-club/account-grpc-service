@@ -40,7 +40,7 @@ describe('AccountController', () => {
   describe('getUser()', () => {
     it('throw error if where is not defined', async () => {
       await expect(controller.getUser({})).rejects.toThrow(
-        new RpcException('Invalid request'),
+        new RpcException('Invalid request.'),
       );
     });
 

@@ -17,7 +17,7 @@ export class AccountController implements AccountServiceController {
   constructor(private readonly managerService: AccountService) {}
 
   async getUser(request: GetUserRequest): Promise<GetUserResponse> {
-    if (!request.where) throw new RpcException('Invalid request');
+    if (!request.where) throw new RpcException('Invalid request.');
 
     const {
       where: {$case, ...where},
