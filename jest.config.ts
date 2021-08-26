@@ -14,6 +14,7 @@ const config: Config.InitialOptions = {
   }),
   collectCoverage: true,
   coverageDirectory: './coverage',
+  coveragePathIgnorePatterns: ['<rootDir>/src/protogen'],
   reporters: ['default'],
 };
 export default config;
