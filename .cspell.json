@@ -41,6 +41,9 @@
     "libssl",
     "eslintcache",
     "streetsidesoftware",
+    "actionlint",
+    "reviewdog"
+    "streetsidesoftware",
     "renovaterc"
   ],
   "ignorePaths": [
