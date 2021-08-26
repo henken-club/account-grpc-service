@@ -40,7 +40,9 @@
     "bcrypt",
     "libssl",
     "eslintcache",
-    "streetsidesoftware"
+    "streetsidesoftware",
+    "actionlint",
+    "reviewdog"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
