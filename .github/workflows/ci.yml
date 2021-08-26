@@ -44,15 +44,6 @@ jobs:
       - run: npm run protogen
       - run: npm run typecheck
 
-  hadolint:
-    name: hadolint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: hadolint/hadolint-action@v1.5.0
-        with:
-          dockerfile: Dockerfile
-
   protolint:
     name: protolint
     runs-on: ubuntu-latest
