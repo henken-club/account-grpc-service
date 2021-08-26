@@ -43,6 +43,8 @@
     "streetsidesoftware",
     "actionlint",
     "reviewdog"
+    "streetsidesoftware",
+    "renovaterc"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
