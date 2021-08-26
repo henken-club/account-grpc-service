@@ -80,6 +80,28 @@ describe('AccountService', () => {
       });
     });
 
+    it('return user with email', async () => {
+      await prisma.user.create({
+        data: {
+          id: '1',
+          email: 'me@example.com',
+          alias: 'alias',
+          password: 'password',
+          displayName: 'name',
+        },
+      });
+
+      const actual = await account.getUser({
+        email: 'me@example.com',
+      });
+      expect(actual).toStrictEqual({
+        id: '1',
+        email: 'me@example.com',
+        alias: 'alias',
+        displayName: 'name',
+      });
+    });
+
     it('return null if user does not exist', async () => {
       const actual = await account.getUser({id: '1'});
       expect(actual).toBeNull();
