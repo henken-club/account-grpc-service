@@ -55,7 +55,7 @@ export class SigninController implements ISigninController {
   async refreshToken({
     refreshToken: oldToken,
   }: RefreshTokenRequest): Promise<RefreshTokenResponse> {
-    const payload = await this.tokens.verifyAccessToken(oldToken);
+    const payload = await this.tokens.disposeRefreshToken(oldToken);
     if (payload === null) throw new RpcException('Invalid token.');
 
     const accessToken = await this.tokens.generateAccessToken(payload.userId);
