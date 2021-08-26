@@ -10,7 +10,7 @@ import {PrismaModule} from '~/prisma/prisma.module';
 import {PrismaService} from '~/prisma/prisma.service';
 import {cleanPrisma} from '~/test/prisma.utils';
 
-describe('AccountService', () => {
+describe('SignupService', () => {
   let app: INestMicroservice;
 
   let prisma: PrismaService;
@@ -39,6 +39,7 @@ describe('AccountService', () => {
   });
 
   afterAll(async () => {
+    await prisma.onModuleDestroy();
     await app.close();
   });
 
@@ -263,7 +264,7 @@ describe('AccountService', () => {
         email: 'me@example.com',
         password: 'password',
         alias: 'alias',
-        displayName: 'alias',
+        displayName: 'name',
       });
     });
 

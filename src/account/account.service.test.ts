@@ -32,6 +32,7 @@ describe('AccountService', () => {
   });
 
   afterAll(async () => {
+    await prisma.onModuleDestroy();
     await app.close();
   });
 

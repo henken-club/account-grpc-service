@@ -5,8 +5,6 @@ import {RpcException} from '@nestjs/microservices';
 import {AccountService} from './account.service';
 import {AccountController} from './account.controller';
 
-import {cleanPrisma} from '~/test/prisma.utils';
-
 jest.mock('./account.service');
 
 describe('AccountController', () => {
@@ -28,7 +26,6 @@ describe('AccountController', () => {
   });
 
   beforeEach(async () => {
-    await cleanPrisma();
     jest.clearAllMocks();
   });
 

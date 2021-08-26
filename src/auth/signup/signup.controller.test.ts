@@ -8,7 +8,6 @@ import {TokensService} from '../tokens.service';
 import {SignupController} from './signup.controller';
 import {SignupService} from './signup.service';
 
-import {cleanPrisma} from '~/test/prisma.utils';
 import {CreateTemporaryUserResponse_Error_Detail} from '~/protogen/account';
 
 jest.mock('../password.service');
@@ -45,7 +44,6 @@ describe('SignupController', () => {
   });
 
   beforeEach(async () => {
-    await cleanPrisma();
     jest.clearAllMocks();
   });
 
