@@ -58,7 +58,7 @@ export class SignupController implements ISignupController {
       email: request.email,
       alias: request.alias,
       password: encryptedPassword,
-      displayName: request.displayName || request.alias,
+      displayName: request.displayName,
     });
 
     const {
@@ -100,11 +100,12 @@ export class SignupController implements ISignupController {
   async registerUser(
     request: RegisterUserRequest,
   ): Promise<RegisterUserResponse> {
-    const pairCorrectness = await this.signup.verifyRegisterPair(
+    const isValidCredentials = await this.signup.verifyRegisterPair(
       request.registerToken,
       request.verifyCode,
     );
-    if (!pairCorrectness) throw new RpcException('Invalid register pair.');
+    if (!isValidCredentials)
+      throw new RpcException('Invalid register credentials.');
 
     const {id: userId} = await this.signup.registerUser(request.registerToken);
 

@@ -65,11 +65,11 @@ export class SignupService {
     password: string;
     email: string;
     alias: string;
-    displayName: string;
+    displayName?: string;
   }): Promise<{id: string}> {
     return this.prisma.temporaryUser.upsert({
       where: {email},
-      create: {email, alias, password, displayName},
+      create: {email, alias, password, displayName: displayName || alias},
       update: {alias, password, displayName},
       select: {id: true},
     });
