@@ -1,6 +1,9 @@
 name: Validate Renovate
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     paths:
       - .renovaterc.json
