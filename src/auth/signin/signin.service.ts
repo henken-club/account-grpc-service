@@ -24,7 +24,7 @@ export class SigninService {
    * @param password 入力されたパスワード
    * @returns ユーザIDに紐づくパスワードが入力と合致していたら`true`，それ以外の場合は`false`
    */
-  async verifyPassword(userId: string, password: string): Promise<boolean> {
+  async verifyCredentials(userId: string, password: string): Promise<boolean> {
     return this.prisma.user
       .findUnique({
         where: {id: userId},

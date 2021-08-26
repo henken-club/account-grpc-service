@@ -21,7 +21,7 @@ import {
 @Controller(HENKENCLUB_ACCOUNT_PACKAGE_NAME)
 export class SigninController implements ISigninController {
   constructor(
-    private readonly auth: SigninService,
+    private readonly service: SigninService,
     private readonly tokens: TokensService,
   ) {}
 
@@ -29,15 +29,18 @@ export class SigninController implements ISigninController {
     if (!name) throw new RpcException('Invalid input.');
 
     const {$case, ...where} = name;
-    const value = await this.auth.findUser(where);
+    const user = await this.service.findUser(where);
 
-    if (value === null) throw new RpcException('User not found.');
+    if (user === null) throw new RpcException('User not found.');
 
-    if (this.auth.verifyPassword(value.id, password))
-      throw new RpcException('Invalid credentials.');
+    const isValidCredentials = await this.service.verifyCredentials(
+      user.id,
+      password,
+    );
+    if (!isValidCredentials) throw new RpcException('Invalid credentials.');
 
-    const accessToken = await this.tokens.generateAccessToken(value.id);
-    const refreshToken = await this.tokens.generateRefreshToken(value.id);
+    const accessToken = await this.tokens.generateAccessToken(user.id);
+    const refreshToken = await this.tokens.generateRefreshToken(user.id);
     return {tokens: {accessToken, refreshToken}};
   }
 
