@@ -40,7 +40,8 @@
     "bcrypt",
     "libssl",
     "eslintcache",
-    "streetsidesoftware"
+    "streetsidesoftware",
+    "renovaterc"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
