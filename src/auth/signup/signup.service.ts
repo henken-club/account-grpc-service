@@ -5,6 +5,7 @@ import {ConfigType} from '@nestjs/config';
 import ms from 'ms';
 
 import {AuthConfig} from '../auth.config';
+import {PasswordService} from '../password.service';
 
 import {PrismaService} from '~/prisma/prisma.service';
 
@@ -16,6 +17,7 @@ export class SignupService {
     @Inject(AuthConfig.KEY)
     private readonly config: ConfigType<typeof AuthConfig>,
     private readonly prisma: PrismaService,
+    private readonly password: PasswordService,
   ) {}
 
   formatTimestamp(date: Date): {seconds: number; nanos: number} {
@@ -61,11 +63,19 @@ export class SignupService {
     alias: string;
     displayName?: string;
   }): Promise<{id: string}> {
-    const {email, alias, displayName = alias, password} = payload;
+    const {
+      email,
+      alias,
+      displayName = alias,
+      password: plainPassword,
+    } = payload;
+    const encryptedPassword = await this.password.encryptPassword(
+      plainPassword,
+    );
     return this.prisma.temporaryUser.upsert({
       where: {email},
-      create: {email, alias, password, displayName},
-      update: {alias, password, displayName},
+      create: {email, alias, password: encryptedPassword, displayName},
+      update: {alias, password: encryptedPassword, displayName},
       select: {id: true},
     });
   }

@@ -3,6 +3,7 @@ import {INestMicroservice} from '@nestjs/common';
 import {ConfigType} from '@nestjs/config';
 
 import {AuthConfig} from '../auth.config';
+import {PasswordService} from '../password.service';
 
 import {SignupService} from './signup.service';
 
@@ -10,18 +11,25 @@ import {PrismaModule} from '~/prisma/prisma.module';
 import {PrismaService} from '~/prisma/prisma.service';
 import {cleanPrisma} from '~/test/prisma.utils';
 
+jest.mock('../password.service');
+
 describe('SignupService', () => {
   let app: INestMicroservice;
 
   let prisma: PrismaService;
   let config: ConfigType<typeof AuthConfig>;
+  let password: PasswordService;
 
   let signup: SignupService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [PrismaModule],
-      providers: [SignupService, {provide: AuthConfig.KEY, useValue: {}}],
+      providers: [
+        PasswordService,
+        SignupService,
+        {provide: AuthConfig.KEY, useValue: {}},
+      ],
     }).compile();
 
     app = module.createNestMicroservice({});
@@ -29,6 +37,7 @@ describe('SignupService', () => {
 
     prisma = module.get<PrismaService>(PrismaService);
     config = module.get<ConfigType<typeof AuthConfig>>(AuthConfig.KEY);
+    password = module.get<PasswordService>(PasswordService);
 
     signup = module.get<SignupService>(SignupService);
   });
@@ -149,6 +158,10 @@ describe('SignupService', () => {
 
   describe('upsertTemporaryUser()', () => {
     it('create temporary user first', async () => {
+      const encryptPassword = jest
+        .spyOn(password, 'encryptPassword')
+        .mockResolvedValue('encrypted_password');
+
       const actual = await signup.upsertTemporaryUser({
         email: 'me@example.com',
         password: 'password',
@@ -163,16 +176,22 @@ describe('SignupService', () => {
       expect(prismaActual).toStrictEqual({
         id: actual.id,
         email: 'me@example.com',
-        password: 'password',
+        password: 'encrypted_password',
         alias: 'alias',
         displayName: 'name',
       });
 
       const count = await prisma.temporaryUser.count();
       expect(count).toBe(1);
+
+      expect(encryptPassword).toHaveBeenCalled();
     });
 
     it('use alias instead undefined displayName', async () => {
+      const encryptPassword = jest
+        .spyOn(password, 'encryptPassword')
+        .mockResolvedValue('encrypted_password');
+
       const actual = await signup.upsertTemporaryUser({
         email: 'me@example.com',
         password: 'password',
@@ -186,16 +205,22 @@ describe('SignupService', () => {
       expect(prismaActual).toStrictEqual({
         id: actual.id,
         email: 'me@example.com',
-        password: 'password',
+        password: 'encrypted_password',
         alias: 'alias',
         displayName: 'alias',
       });
 
       const count = await prisma.temporaryUser.count();
       expect(count).toBe(1);
+
+      expect(encryptPassword).toHaveBeenCalled();
     });
 
     it('update temporary user', async () => {
+      const encryptPassword = jest
+        .spyOn(password, 'encryptPassword')
+        .mockResolvedValue('encrypted_password');
+
       const {id: alreadyId} = await prisma.temporaryUser.create({
         data: {
           email: 'me@example.com',
@@ -220,13 +245,15 @@ describe('SignupService', () => {
       expect(prismaActual).toStrictEqual({
         id: alreadyId,
         email: 'me@example.com',
-        password: 'password_new',
+        password: 'encrypted_password',
         alias: 'alias_new',
         displayName: 'name_new',
       });
 
       const count = await prisma.temporaryUser.count();
       expect(count).toBe(1);
+
+      expect(encryptPassword).toHaveBeenCalled();
     });
   });
 

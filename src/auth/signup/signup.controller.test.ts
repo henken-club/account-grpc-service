@@ -25,12 +25,7 @@ describe('SignupController', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      providers: [
-        PasswordService,
-        TokensService,
-        SignupController,
-        SignupService,
-      ],
+      providers: [TokensService, SignupController, SignupService],
     }).compile();
 
     app = module.createNestMicroservice({});
@@ -40,7 +35,6 @@ describe('SignupController', () => {
     service = module.get<SignupService>(SignupService);
 
     tokens = module.get<TokensService>(TokensService);
-    password = module.get<PasswordService>(PasswordService);
   });
 
   beforeEach(async () => {
@@ -148,10 +142,6 @@ describe('SignupController', () => {
     });
 
     it('success', async () => {
-      const encryptPassword = jest
-        .spyOn(password, 'encryptPassword')
-        .mockResolvedValue('encrypted_password');
-
       const isEmailDup = jest
         .spyOn(service, 'isEmailDuplicated')
         .mockResolvedValue(false);
@@ -197,8 +187,6 @@ describe('SignupController', () => {
 
       expect(isEmailDup).toHaveBeenCalled();
       expect(isAliasDup).toHaveBeenCalled();
-
-      expect(encryptPassword).toHaveBeenCalled();
 
       expect(upsertTempUser).toHaveBeenCalled();
       expect(createRegCredentials).toHaveBeenCalled();

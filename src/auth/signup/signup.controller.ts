@@ -2,7 +2,6 @@ import {Controller} from '@nestjs/common';
 import {RpcException} from '@nestjs/microservices';
 
 import {TokensService} from '../tokens.service';
-import {PasswordService} from '../password.service';
 
 import {SignupService} from './signup.service';
 
@@ -24,15 +23,17 @@ import {
 export class SignupController implements ISignupController {
   constructor(
     private readonly signup: SignupService,
-    private readonly password: PasswordService,
     private readonly tokens: TokensService,
   ) {}
 
-  async createTemporaryUser(
-    request: CreateTemporaryUserRequest,
-  ): Promise<CreateTemporaryUserResponse> {
-    const emailDuplicate = await this.signup.isEmailDuplicated(request.email);
-    const aliasDuplicate = await this.signup.isAliasDuplicated(request.alias);
+  async createTemporaryUser({
+    alias,
+    email,
+    password,
+    displayName,
+  }: CreateTemporaryUserRequest): Promise<CreateTemporaryUserResponse> {
+    const emailDuplicate = await this.signup.isEmailDuplicated(email);
+    const aliasDuplicate = await this.signup.isAliasDuplicated(alias);
     if (emailDuplicate || aliasDuplicate)
       return {
         result: {
@@ -50,15 +51,11 @@ export class SignupController implements ISignupController {
         },
       };
 
-    const encryptedPassword = await this.password.encryptPassword(
-      request.password,
-    );
-
     const tempUser = await this.signup.upsertTemporaryUser({
-      email: request.email,
-      alias: request.alias,
-      password: encryptedPassword,
-      displayName: request.displayName,
+      email,
+      alias,
+      password,
+      displayName,
     });
 
     const {
