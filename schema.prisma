@@ -8,12 +8,11 @@ generator client {
 }
 
 model TemporaryUser {
-  id          String   @id @default(uuid())
-  email       String   @unique
+  id          String @id @default(uuid())
+  email       String @unique
   alias       String
   displayName String
   password    String
-  updatedAt   DateTime @updatedAt
 
   registration Registration?
 }

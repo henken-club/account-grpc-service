@@ -7,7 +7,6 @@ import ms from 'ms';
 import {AuthConfig} from '../auth.config';
 
 import {PrismaService} from '~/prisma/prisma.service';
-import {Timestamp} from '~/protogen/google/protobuf/timestamp';
 
 export type RegisterTokenPayload = {uid: string};
 
@@ -19,10 +18,10 @@ export class SignupService {
     private readonly prisma: PrismaService,
   ) {}
 
-  formatTimestamp(date: Date): Timestamp {
+  formatTimestamp(date: Date): {seconds: number; nanos: number} {
     return {
-      seconds: date.valueOf() / 1000,
-      nanos: (date.valueOf() % 1000) * 1e6,
+      seconds: Math.floor(date.getTime() / 1000),
+      nanos: 0 + (date.getTime() % 1000) * 1e6,
     };
   }
 
@@ -56,20 +55,16 @@ export class SignupService {
    * @param payload
    * @returns 仮生成されたユーザーの情報
    */
-  async upsertTemporaryUser({
-    password,
-    email,
-    alias,
-    displayName,
-  }: {
+  async upsertTemporaryUser(payload: {
     password: string;
     email: string;
     alias: string;
     displayName?: string;
   }): Promise<{id: string}> {
+    const {email, alias, displayName = alias, password} = payload;
     return this.prisma.temporaryUser.upsert({
       where: {email},
-      create: {email, alias, password, displayName: displayName || alias},
+      create: {email, alias, password, displayName},
       update: {alias, password, displayName},
       select: {id: true},
     });
@@ -150,6 +145,11 @@ export class SignupService {
         where: {token: registerToken},
         select: {user: true},
         rejectOnNotFound: true,
+      })
+      .catch(() => {
+        throw new Error(
+          `Registration with token "${registerToken}" was not found.`,
+        );
       })
       .then(({user: {id, email, alias, password, displayName}}) =>
         this.prisma.user.upsert({

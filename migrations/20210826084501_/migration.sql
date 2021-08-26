@@ -5,7 +5,6 @@ CREATE TABLE `TemporaryUser` (
     `alias` VARCHAR(191) NOT NULL,
     `displayName` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `TemporaryUser.email_unique`(`email`),
     PRIMARY KEY (`id`)
