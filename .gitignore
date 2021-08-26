@@ -1,6 +1,6 @@
 # dependencies
 node_modules/
-package-lock.json
+yarn.lock
 
 # logfiles
 *.log
@@ -9,11 +9,7 @@ package-lock.json
 dist/
 
 # protogen
-src/protogen/
-
-# auto generated
-src/graphql.ts
-src/schema.graphql
+src/protogen/*
 
 # test
 coverage/
@@ -31,3 +27,6 @@ coverage/
 
 # ESLint
 .eslintcache
+
+# ignore keep
+!.keep

@@ -1,7 +1,24 @@
 {
   "version": "0.1",
   "language": "en",
-  "words": ["proto", "signin", "signup", "oneof"],
+  "words": [
+    "datamodel",
+    "datasource",
+    "deps",
+    "healthcheck",
+    "logfiles",
+    "microservice",
+    "microservices",
+    "nanos",
+    "oneof",
+    "proto",
+    "protogen",
+    "signin",
+    "signup",
+    "typecheck",
+    "upsert",
+    "workdir"
+  ],
   "ignoreWords": [
     "henken",
     "henkenclub",
@@ -9,12 +26,31 @@
     "plexsystems",
     "bcrpyt",
     "protobuf",
+    "streetsidesoftware",
+    "nestjs",
+    "grpc",
+    "hadolint",
+    "scripty",
+    "arkweid",
+    "lefthook",
+    "dmmf",
+    "protoc",
+    "mkdir",
+    "mysqladmin",
+    "bcrypt",
+    "libssl",
+    "eslintcache",
     "streetsidesoftware"
   ],
   "ignorePaths": [
     ".vscode/extensions.json",
     "dist/**",
     "node_modules/**",
-    ".cspell.json"
-  ]
+    "migrations/**",
+    "scripts/**",
+    "src/protogen/**",
+    ".cspell.json",
+    "package-lock.json"
+  ],
+  "enableFiletypes": ["dockerfile", "dotenv", "ignore", "proto3"]
 }

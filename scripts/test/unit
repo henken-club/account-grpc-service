@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+export PRISMA_DATABASE_URL=$TEST_PRISMA_DATABASE_URL
+
+prisma migrate reset --force
+jest --config=jest.config.ts --runInBand $@

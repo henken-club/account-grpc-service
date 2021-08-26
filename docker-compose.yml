@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - published: $PORT
+        target: 5001
+    environment:
+      PORT: $PORT
+
+      BCRYPT_ROUND: 10
+
+      JWT_ACCESS_SECRET: $JWT_ACCESS_SECRET
+      JWT_ACCESS_EXPIRE_DURATION: 600s
+
+      JWT_REFRESH_SECRET: $JWT_REFRESH_SECRET
+      JWT_REFRESH_EXPIRE_DURATION: 7d
+
+      PRISMA_DATABASE_URL: mysql://root:@mysql:3306/$MYSQL_DATABASE
+
+  mysql:
+    image: mysql:8
+    ports:
+      - published: $MYSQL_PORT
+        target: 3306
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

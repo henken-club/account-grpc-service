@@ -7,6 +7,52 @@ on:
   pull_request:
 
 jobs:
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.4.2
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:eslint
+
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.4.2
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:prettier
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.4.2
+          cache: npm
+      - run: npm ci
+      - run: npm run protogen
+      - run: npm run typecheck
+
+  hadolint:
+    name: hadolint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: hadolint/hadolint-action@v1.5.0
+        with:
+          dockerfile: Dockerfile
+
   protolint:
     name: protolint
     runs-on: ubuntu-latest
@@ -17,8 +63,52 @@ jobs:
           configDirectory: ./
 
   cspell:
-    name: cspell
+    name: cSpell
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: streetsidesoftware/cspell-action@v1.0.1
+
+  test-unit:
+    name: Unit Test
+    runs-on: ubuntu-latest
+
+    env:
+      TEST_PRISMA_DATABASE_URL: mysql://root:@localhost:3306/test
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 1s
+          --health-timeout 3s
+          --health-retries 30
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.4.2
+      - run: npm ci
+      - run: npm run protogen
+      - run: npm run test:unit
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.4.2
+          cache: npm
+      - run: npm ci
+      - run: npm run prisma:generate
+      - run: npm run protogen
+      - run: npm run build
