@@ -25,7 +25,7 @@ services:
       PRISMA_DATABASE_URL: mysql://root:@mysql:3306/$MYSQL_DATABASE
 
   mysql:
-    image: mysql:8
+    image: mysql:8@sha256:d45561a65aba6edac77be36e0a53f0c1fba67b951cb728348522b671ad63f926
     ports:
       - published: $MYSQL_PORT
         target: 3306

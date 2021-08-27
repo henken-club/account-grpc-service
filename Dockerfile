@@ -1,5 +1,5 @@
 # Nodejs for Prisma
-FROM node:16.4.2-slim AS node-for-prisma
+FROM node:16.4.2-slim@sha256:aac69b631df92a3d2b60cbc27f099862f4fb7694231f493a65cc937bd00e6104 AS node-for-prisma
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libssl-dev=1.1.1d-0+deb10u6 \
