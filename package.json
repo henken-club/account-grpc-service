@@ -35,7 +35,7 @@
   "devDependencies": {
     "@arkweid/lefthook": "0.7.6",
     "@nestjs/cli": "^8.1.1",
-    "@nestjs/schematics": "8.0.2",
+    "@nestjs/schematics": "8.0.3",
     "@nestjs/testing": "^8.0.6",
     "@shopify/eslint-plugin": "40.4.0",
     "@shopify/prettier-config": "1.1.2",
