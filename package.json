@@ -56,6 +56,6 @@
     "ts-node": "9.1.1",
     "ts-proto": "1.82.5",
     "tsconfig-paths": "3.10.1",
-    "typescript": "4.3.5"
+    "typescript": "4.4.2"
   }
 }
